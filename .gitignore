@@ -1,4 +1,9 @@
 *.json
-*.txt
 *.zip
 *.csv
+venv/
+.env
+.env.local
+__pycache__/
+*.pyc
+.pytest_cache/

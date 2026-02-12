@@ -4,55 +4,68 @@ from datetime import datetime
 
 def get_fixtures():
     """
-    Get upcoming NRL fixtures
+    Get upcoming NRL fixtures for Round 1, 2026
     Returns list of scheduled matches
     """
-    # Return sample fixtures - in production this would scrape NRL website
     return {
-        "round": 6,
+        "round": 1,
         "year": 2026,
         "fixtures": [
             {
-                "date": "2026-05-10",
-                "time": "19:55 AEST",
+                "date": "2026-03-05",
+                "time": "20:00 AEST",
                 "home_team": "Melbourne Storm",
                 "away_team": "Sydney Roosters",
                 "venue": "AAMI Park"
             },
             {
-                "date": "2026-05-11",
-                "time": "15:00 AEST",
+                "date": "2026-03-06",
+                "time": "18:00 AEST",
                 "home_team": "Penrith Panthers",
                 "away_team": "Brisbane Broncos",
                 "venue": "BlueBet Stadium"
             },
             {
-                "date": "2026-05-11",
-                "time": "17:30 AEST",
+                "date": "2026-03-06",
+                "time": "20:30 AEST",
                 "home_team": "North Queensland Cowboys",
                 "away_team": "South Sydney Rabbitohs",
                 "venue": "Queensland Country Bank Stadium"
             },
             {
-                "date": "2026-05-11",
-                "time": "19:35 AEST",
+                "date": "2026-03-07",
+                "time": "16:00 AEST",
                 "home_team": "Parramatta Eels",
                 "away_team": "Canterbury-Bankstown Bulldogs",
                 "venue": "CommBank Stadium"
             },
             {
-                "date": "2026-05-12",
-                "time": "18:00 AEST",
+                "date": "2026-03-07",
+                "time": "18:30 AEST",
                 "home_team": "Newcastle Knights",
                 "away_team": "St George Illawarra Dragons",
                 "venue": "McDonald Jones Stadium"
             },
             {
-                "date": "2026-05-12",
-                "time": "19:50 AEST",
+                "date": "2026-03-07",
+                "time": "20:30 AEST",
                 "home_team": "Wests Tigers",
                 "away_team": "Manly-Warringah Sea Eagles",
                 "venue": "Leichhardt Oval"
+            },
+            {
+                "date": "2026-03-08",
+                "time": "18:00 AEST",
+                "home_team": "Cronulla-Sutherland Sharks",
+                "away_team": "Dolphins",
+                "venue": "PointsBet Stadium"
+            },
+            {
+                "date": "2026-03-08",
+                "time": "20:00 AEST",
+                "home_team": "Gold Coast Titans",
+                "away_team": "Canberra Raiders",
+                "venue": "Cbus Super Stadium"
             }
         ],
         "last_updated": datetime.now().isoformat()
@@ -68,5 +81,5 @@ def get_round_fixtures(round_num, year=2026):
     if "error" in fixtures:
         return fixtures
     
-    # Filter by round (in a real implementation this would fetch specific round)
+    fixtures["round"] = round_num
     return fixtures

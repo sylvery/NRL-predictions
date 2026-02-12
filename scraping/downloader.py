@@ -14,15 +14,18 @@ import os
 import sys
 import requests
 import json
+import logging
 from typing import List, Callable
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Add parent directory to path to import environment variables
 sys.path.append('..')
 import ENVIRONMENT_VARIABLES as EV
 
 # Configurable constants
-SELECTION_TYPE: List[str] = ['HOSTPLUS']
-YEARS: List[int] = [2021, 2022, 2023, 2024]
+SELECTION_TYPE: List[str] = ['NRL', 'NRLW', 'HOSTPLUS', 'KNOCKON']
+YEARS: List[int] = [2021, 2022, 2023, 2024, 2025, 2026]
 
 
 class DataDownloader:
@@ -115,6 +118,17 @@ class DataDownloader:
         for the specified selection and year. Skips existing files.
         """
         self.ensure_directory()
+        
+        # Create session with retry logic
+        session = requests.Session()
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[429, 500, 502, 503, 504],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
 
         for func in self.data_functions:
             filename: str = func()
@@ -122,20 +136,23 @@ class DataDownloader:
             file_path: str = os.path.join(self.directory_path, filename)
 
             if os.path.exists(file_path):
-                print(f"File already exists, skipping: {file_path}")
+                logging.info(f"File already exists, skipping: {file_path}")
                 continue
 
-            response = requests.get(file_url)
-            if response.status_code == 200:
-                try:
-                    data = response.json()
-                    with open(file_path, "w", encoding="utf-8") as f:
-                        json.dump(data, f, ensure_ascii=False, indent=4)
-                    print(f"Downloaded and saved: {file_path}")
-                except ValueError:
-                    print(f"Failed to parse JSON from: {file_url}")
-            else:
-                print(f"Failed to download file: {file_url} — Status code: {response.status_code}")
+            try:
+                response = session.get(file_url, timeout=30)
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        with open(file_path, "w", encoding="utf-8") as f:
+                            json.dump(data, f, ensure_ascii=False, indent=4)
+                        logging.info(f"Downloaded and saved: {file_path}")
+                    except ValueError:
+                        logging.error(f"Failed to parse JSON from: {file_url}")
+                else:
+                    logging.error(f"Failed to download file: {file_url} — Status code: {response.status_code}")
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Request failed for {file_url}: {e}")
 
 
 # Execute downloads for all configured selection types and years

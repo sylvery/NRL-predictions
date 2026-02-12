@@ -26,7 +26,8 @@ PLAYER_LABELS =     ["Number", "Position", "Mins Played", "Points", "Tries", "Co
 
 
 
-NRL_2024_ROUND = 1
+# Current NRL round (update weekly)
+NRL_2026_ROUND = 5  # Assuming early season - update as needed
 
 
 

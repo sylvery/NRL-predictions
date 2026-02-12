@@ -1,0 +1,15 @@
+[buildPlan]
+# Tell Railway this is a Python app
+buildProvider = "nixpacks"
+
+[phases.setup]
+# Create virtual environment and install dependencies
+nixPacksSetup = '''python3 -m venv venv && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements-web.txt'''
+
+[phases.build]
+# No additional build steps needed for FastAPI
+nixpacksBuild = ""
+
+[phases.start]
+# Start the application
+nixpacksStart = "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"

@@ -32,7 +32,9 @@ def get_fixtures_from_nrl(year=2026, competition='111'):
         if not raw_json:
             return None
         
-        raw_json = raw_json.replace(""", '"')
+        # Fix HTML entities - use BeautifulSoup's built-in parser
+        from html import unescape
+        raw_json = unescape(raw_json)
         
         try:
             data = json.loads(raw_json)
@@ -81,12 +83,12 @@ def get_fixtures():
     if nrl_data and nrl_data.get("fixtures"):
         return nrl_data
     
-    # Fallback - sample data (this shouldn't happen if NRL site is up)
+    # Fallback - sample data
     return {
         "round": 1,
         "year": 2026,
         "fixtures": [],
-        "error": "Could not fetch from nrl.com - using placeholder data",
+        "error": "Could not fetch from nrl.com",
         "last_updated": datetime.now().isoformat()
     }
 
@@ -112,7 +114,11 @@ def get_round_fixtures(round_num, year=2026):
         if not script_tag:
             return get_fixtures()
         
-        raw_json = script_tag.get("q-data", "").replace(""", '"')
+        raw_json = script_tag.get("q-data", "")
+        
+        # Fix HTML entities using html.unescape
+        from html import unescape
+        raw_json = unescape(raw_json)
         
         try:
             data = json.loads(raw_json)

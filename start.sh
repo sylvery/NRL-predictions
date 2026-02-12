@@ -1,5 +1,6 @@
 #!/bin/bash
 # Railpack start script for Railway deployment
+# Updated: 2026-02-12
 
 # Install dependencies
 pip install --upgrade pip

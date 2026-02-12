@@ -1,0 +1,9 @@
+#!/bin/bash
+# Railpack start script for Railway deployment
+
+# Install dependencies
+pip install --upgrade pip
+pip install -r requirements-web.txt
+
+# Start the FastAPI application
+exec python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT

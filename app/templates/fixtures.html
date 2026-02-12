@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NRL Fixtures</title>
+    <title>NRL Fixtures 2026</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>📅 NRL Fixtures</h1>
-            <p class="subtitle">Round <span id="round-number">6</span> - 2026</p>
+            <p class="subtitle" id="season-info">2026 Season</p>
         </header>
 
         <nav>
@@ -20,13 +20,21 @@
         </nav>
 
         <main>
+            <div class="round-selector">
+                <a href="/?round=1" class="round-link">Round 1</a>
+                <a href="/?round=2" class="round-link">Round 2</a>
+                <a href="/?round=3" class="round-link">Round 3</a>
+                <a href="/?round=4" class="round-link">Round 4</a>
+                <a href="/?round=5" class="round-link">Round 5</a>
+            </div>
+
             <div id="fixtures-container" class="fixtures-list">
-                <p class="loading">Loading fixtures...</p>
+                <p class="loading">Loading fixtures from nrl.com...</p>
             </div>
         </main>
 
         <footer>
-            <p>NRL Predictions © 2026</p>
+            <p>Data sourced from nrl.com | NRL Predictions © 2026</p>
         </footer>
     </div>
 
@@ -37,34 +45,56 @@
                 const data = await response.json();
                 
                 const container = document.getElementById('fixtures-container');
+                const seasonInfo = document.getElementById('season-info');
                 
                 if (data.error) {
                     container.innerHTML = `<p class="error">Error: ${data.error}</p>`;
                     return;
                 }
-
-                document.getElementById('round-number').textContent = data.round;
-
+                
+                if (!data.fixtures || data.fixtures.length === 0) {
+                    container.innerHTML = '<p class="error">No fixtures found. The 2026 season may not be released yet on nrl.com</p>';
+                    return;
+                }
+                
+                seasonInfo.textContent = data.year ? `${data.year} Season` : '2026 Season';
+                
                 let html = '';
+                
+                // Group by date
+                const fixturesByDate = {};
                 data.fixtures.forEach(match => {
-                    html += `
-                        <div class="fixture-card">
-                            <div class="fixture-date">${match.date} - ${match.time}</div>
-                            <div class="fixture-teams">
-                                <span class="home-team">${match.home_team}</span>
-                                <span class="vs">vs</span>
-                                <span class="away-team">${match.away_team}</span>
-                            </div>
-                            <div class="fixture-venue">${match.venue}</div>
-                        </div>
-                    `;
+                    const date = match.date || 'TBD';
+                    if (!fixturesByDate[date]) {
+                        fixturesByDate[date] = [];
+                    }
+                    fixturesByDate[date].push(match);
                 });
-
+                
+                // Display fixtures
+                for (const [date, matches] of Object.entries(fixturesByDate)) {
+                    html += `<div class="date-header">${date}</div>`;
+                    matches.forEach(match => {
+                        html += `
+                            <div class="fixture-card">
+                                <div class="fixture-time">${match.time || 'Time TBD'}</div>
+                                <div class="fixture-teams">
+                                    <span class="home-team">${match.home_team}</span>
+                                    <span class="vs">vs</span>
+                                    <span class="away-team">${match.away_team}</span>
+                                </div>
+                                <div class="fixture-venue">${match.venue || 'Venue TBD'}</div>
+                                <div class="fixture-round">${match.round || ''}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
                 container.innerHTML = html;
             } catch (error) {
                 console.error('Error loading fixtures:', error);
                 document.getElementById('fixtures-container').innerHTML = 
-                    '<p class="error">Error loading fixtures. Please try again.</p>';
+                    '<p class="error">Error loading fixtures. Please try again later.</p>';
             }
         }
 

@@ -1,14 +1,16 @@
 """
 NRL Predictions FastAPI Application
+Fetches real data from nrl.com
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 import os
 
 app = FastAPI(
     title="NRL Predictions API",
-    description="NRL Match Predictions and Try Scorer Probabilities",
+    description="NRL Match Predictions and Try Scorer Probabilities - Real-time data from nrl.com",
     version="1.0.0"
 )
 
@@ -23,17 +25,9 @@ templates = Jinja2Templates(directory=templates_dir)
 
 
 @app.get("/")
-async def home():
-    """Home page"""
-    return {
-        "message": "NRL Predictions API",
-        "version": "1.0.0",
-        "endpoints": {
-            "predictions": "/api/predictions",
-            "fixtures": "/api/fixtures",
-            "health": "/api/health"
-        }
-    }
+async def home(request: Request):
+    """Home page with current fixtures"""
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/api/health")
@@ -53,21 +47,23 @@ async def get_predictions():
 
 
 @app.get("/api/fixtures")
-async def get_fixtures():
-    """Get upcoming fixtures"""
+async def get_fixtures(round_num: int = None):
+    """Get fixtures - all or specific round from nrl.com"""
+    if round_num:
+        return fixtures.get_round_fixtures(round_num)
     return fixtures.get_fixtures()
 
 
-@app.get("/try-scorers")
-async def try_scorers_page():
-    """Try scorer predictions page"""
-    return templates.TemplateResponse("try_scorers.html", {"request": {}})
-
-
 @app.get("/fixtures")
-async def fixtures_page():
+async def fixtures_page(request: Request):
     """Fixtures page"""
-    return templates.TemplateResponse("fixtures.html", {"request": {}})
+    return templates.TemplateResponse("fixtures.html", {"request": request})
+
+
+@app.get("/try-scorers")
+async def try_scorers_page(request: Request):
+    """Try scorer predictions page"""
+    return templates.TemplateResponse("try_scorers.html", {"request": request})
 
 
 if __name__ == "__main__":

@@ -1,0 +1,324 @@
+:root {
+    --primary: #00d4ff;
+    --primary-dark: #00a8cc;
+    --background: #0f0f23;
+    --card-bg: #1a1a2e;
+    --card-border: #2a2a4a;
+    --text: #ffffff;
+    --text-secondary: #888888;
+    --success: #00ff88;
+    --danger: #ff6b6b;
+    --warning: #ffa500;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1em;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--card-border);
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-group label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: var(--background);
+    color: var(--text);
+    font-size: 1em;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+select:hover, select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.btn-primary {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+}
+
+.predictions-container {
+    margin-top: 20px;
+}
+
+.predictions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.predictions-header h2 {
+    font-size: 1.5em;
+}
+
+.match-count {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.match-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 15px;
+    border: 1px solid var(--card-border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.match-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.match-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.team {
+    text-align: center;
+    flex: 1;
+}
+
+.team-name {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.win-prob {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.vs {
+    font-size: 1em;
+    color: var(--text-secondary);
+    padding: 0 20px;
+    font-weight: 600;
+}
+
+.prob-bars {
+    margin: 15px 0;
+}
+
+.prob-bar {
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.prob-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.prob-bar.home .prob-fill {
+    background: linear-gradient(90deg, var(--primary), var(--success));
+}
+
+.prob-bar.away .prob-fill {
+    background: linear-gradient(90deg, var(--warning), var(--danger));
+}
+
+.prediction-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--card-border);
+}
+
+.predicted-winner {
+    color: var(--primary);
+}
+
+.confidence {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.api-info {
+    margin-top: 50px;
+    padding: 25px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--card-border);
+}
+
+.api-info h3 {
+    margin-bottom: 15px;
+}
+
+.api-info code {
+    display: block;
+    background: #000;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.api-info a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.api-info a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--card-border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.error {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 15px;
+    border: 1px solid var(--danger);
+}
+
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-group {
+        justify-content: space-between;
+    }
+
+    .teams {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .vs {
+        transform: rotate(90deg);
+    }
+
+    .prediction-footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}

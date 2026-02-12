@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRL Predictions</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏉 NRL Predictions</h1>
+            <p class="subtitle">ML-powered predictions for NRL matches</p>
+        </header>
+
+        <section class="controls">
+            <div class="control-group">
+                <label for="round-select">Round:</label>
+                <select id="round-select">
+                    {% for r in range(1, 30) %}
+                    <option value="{{ r }}" {% if r == 5 %}selected{% endif %}>Round {{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="year-select">Year:</label>
+                <select id="year-select">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+            <button id="fetch-btn" class="btn-primary">Get Predictions</button>
+        </section>
+
+        <section id="predictions-container" class="predictions-container">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading predictions...</p>
+            </div>
+            <div class="placeholder">
+                <p>👆 Select a round and click "Get Predictions"</p>
+            </div>
+        </section>
+
+        <section class="api-info">
+            <h3>🔗 API Access</h3>
+            <p>Use our API for programmatic access:</p>
+            <code>GET /api/predictions?year=2026&round=5</code>
+            <p><a href="/docs" target="_blank">View API Documentation →</a></p>
+        </section>
+
+        <footer>
+            <p>Powered by ML Predictions • Data from NRL</p>
+        </footer>
+    </div>
+
+    <script>
+        const fetchBtn = document.getElementById('fetch-btn');
+        const predictionsContainer = document.getElementById('predictions-container');
+        const roundSelect = document.getElementById('round-select');
+        const yearSelect = document.getElementById('year-select');
+
+        async function fetchPredictions() {
+            const round = roundSelect.value;
+            const year = yearSelect.value;
+
+            predictionsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching predictions for Round ${round}, ${year}...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/predictions?year=${year}&round=${round}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch predictions');
+                }
+                const data = await response.json();
+
+                displayPredictions(data);
+            } catch (error) {
+                predictionsContainer.innerHTML = `
+                    <div class="error">
+                        <p>❌ Error: ${error.message}</p>
+                        <p>No fixtures found for this round.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayPredictions(data) {
+            if (!data.predictions || data.predictions.length === 0) {
+                predictionsContainer.innerHTML = `
+                    <div class="placeholder">
+                        <p>No predictions available for this round.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="predictions-header">
+                    <h2>Round ${data.round} - ${data.year}</h2>
+                    <span class="match-count">${data.predictions.length} matches</span>
+                </div>
+            `;
+
+            data.predictions.forEach((pred, index) => {
+                const homeColor = pred.predicted_winner === pred.home_team ? 'var(--primary)' : '#666';
+                const awayColor = pred.predicted_winner === pred.away_team ? 'var(--primary)' : '#666';
+                const homeBar = pred.home_win_probability * 100;
+                const awayBar = pred.away_win_probability * 100;
+
+                html += `
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="venue">📍 ${pred.venue || 'TBD'}</span>
+                            <span class="kickoff">🕐 ${pred.kickoff || 'TBD'}</span>
+                        </div>
+                        <div class="teams">
+                            <div class="team home">
+                                <div class="team-name" style="color: ${homeColor}">${pred.home_team}</div>
+                                <div class="win-prob">${(pred.home_win_probability * 100).toFixed(0)}%</div>
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="team away">
+                                <div class="team-name" style="color: ${awayColor}">${pred.away_team}</div>
+                                <div class="win-prob">${(pred.away_win_probability * 100).toFixed(0)}%</div>
+                            </div>
+                        </div>
+                        <div class="prob-bars">
+                            <div class="prob-bar home">
+                                <div class="prob-fill" style="width: ${homeBar}%"></div>
+                            </div>
+                            <div class="prob-bar away">
+                                <div class="prob-fill" style="width: ${awayBar}%"></div>
+                            </div>
+                        </div>
+                        <div class="prediction-footer">
+                            <span class="predicted-winner">🎯 <strong>${pred.predicted_winner}</strong> to win</span>
+                            <span class="confidence">📊 Confidence: ${pred.confidence}/10</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            predictionsContainer.innerHTML = html;
+        }
+
+        fetchBtn.addEventListener('click', fetchPredictions);
+
+        // Load predictions for default round on page load
+        fetchPredictions();
+    </script>
+</body>
+</html>

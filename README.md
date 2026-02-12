@@ -171,11 +171,11 @@ JSON is the default format for all code. Conversions tools have been generated t
 * Run the Jupyter notebook located in `/predictions/`
 
 ## Future Tasks 
-* Update the machine learning model to work with 2024 data
+* Update the machine learning model to work with 2024/2026 data
 * Update the website to display prediction results
 * Clean up all the code
 * Optimise the current machine learning model 
-* Update requirements.txt
+* ~~Update requirements.txt~~ ✅ Done
 * Provide a more descriptive README
 * NRLW data
 * Anytime Try Scorer Probability model

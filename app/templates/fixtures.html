@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRL Fixtures</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 NRL Fixtures</h1>
+            <p class="subtitle">Round <span id="round-number">6</span> - 2026</p>
+        </header>
+
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/fixtures" class="nav-link active">Fixtures</a>
+            <a href="/try-scorers" class="nav-link">Try Scorers</a>
+        </nav>
+
+        <main>
+            <div id="fixtures-container" class="fixtures-list">
+                <p class="loading">Loading fixtures...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>NRL Predictions © 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        async function loadFixtures() {
+            try {
+                const response = await fetch('/api/fixtures');
+                const data = await response.json();
+                
+                const container = document.getElementById('fixtures-container');
+                
+                if (data.error) {
+                    container.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                    return;
+                }
+
+                document.getElementById('round-number').textContent = data.round;
+
+                let html = '';
+                data.fixtures.forEach(match => {
+                    html += `
+                        <div class="fixture-card">
+                            <div class="fixture-date">${match.date} - ${match.time}</div>
+                            <div class="fixture-teams">
+                                <span class="home-team">${match.home_team}</span>
+                                <span class="vs">vs</span>
+                                <span class="away-team">${match.away_team}</span>
+                            </div>
+                            <div class="fixture-venue">${match.venue}</div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading fixtures:', error);
+                document.getElementById('fixtures-container').innerHTML = 
+                    '<p class="error">Error loading fixtures. Please try again.</p>';
+            }
+        }
+
+        loadFixtures();
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRL Predictions</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏉 NRL Predictions</h1>
+            <p class="subtitle">2026 Season</p>
+        </header>
+
+        <nav>
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/fixtures" class="nav-link">Fixtures</a>
+            <a href="/try-scorers" class="nav-link">Try Scorers</a>
+        </nav>
+
+        <main>
+            <section class="api-section">
+                <h2>API Endpoints</h2>
+                <div class="endpoint">
+                    <code>GET /api/predictions</code>
+                    <p>Get match predictions for upcoming rounds</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /api/fixtures</code>
+                    <p>Get upcoming NRL fixtures</p>
+                </div>
+                <div class="endpoint">
+                    <code>GET /api/health</code>
+                    <p>Health check endpoint</p>
+                </div>
+            </section>
+
+            <section class="about-section">
+                <h2>About</h2>
+                <p>
+                    NRL Predictions uses machine learning to predict NRL match outcomes
+                    and try scorer probabilities. The system analyzes historical data,
+                    team form, and various statistical factors.
+                </p>
+            </section>
+        </main>
+
+        <footer>
+            <p>NRL Predictions © 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load predictions on page load
+        async function loadPredictions() {
+            try {
+                const response = await fetch('/api/predictions');
+                const data = await response.json();
+                console.log('Predictions:', data);
+            } catch (error) {
+                console.error('Error loading predictions:', error);
+            }
+        }
+
+        loadPredictions();
+    </script>
+</body>
+</html>
